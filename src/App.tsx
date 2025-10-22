@@ -8,7 +8,7 @@ import { Post } from "./types";
 const App: React.FC = () => {
   const navigate = useNavigate();
 
-  // ✅ Dữ liệu mẫu ban đầu
+  
   const [posts, setPosts] = useState<Post[]>([
     {
       id: "1",
@@ -39,7 +39,7 @@ const App: React.FC = () => {
     },
   ]);
 
-  // ✅ Thêm bài viết mới
+ 
   const addPost = (data: Omit<Post, "id" | "createdAt">) => {
     const newPost: Post = {
       id: Date.now().toString(),
@@ -49,7 +49,7 @@ const App: React.FC = () => {
     setPosts([newPost, ...posts]);
   };
 
-  // ✅ Xóa bài viết
+
   const deletePost = (id: string) => {
     if (window.confirm("Bạn có chắc muốn xóa bài viết này?")) {
       setPosts(posts.filter((p) => p.id !== id));
@@ -57,7 +57,7 @@ const App: React.FC = () => {
     }
   };
 
-  // ✅ Cập nhật bài viết
+
   const updatePost = (id: string, data: Omit<Post, "id" | "createdAt">) => {
     setPosts(
       posts.map((p) =>
@@ -68,7 +68,7 @@ const App: React.FC = () => {
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif" }}>
-      {/* ✅ Thanh Navbar */}
+     
       <nav
         style={{
           background: "#007bff",
@@ -105,7 +105,7 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      {/* ✅ Định tuyến các trang */}
+      
       <Routes>
         <Route
           path="/"
