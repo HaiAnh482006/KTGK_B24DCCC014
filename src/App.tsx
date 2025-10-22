@@ -1,63 +1,128 @@
 import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
 import PostList from "./components/PostList";
-import PostForm from "./components/PostForm";
 import PostDetail from "./components/PostDetail";
+import PostForm from "./components/PostForm";
 import { Post } from "./types";
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+
+  // ✅ Dữ liệu mẫu ban đầu
   const [posts, setPosts] = useState<Post[]>([
     {
       id: "1",
-      title: "Lập trình React cơ bản",
+      title: "Giới thiệu về ReactJS",
       author: "Nguyễn Văn A",
-      thumbnail: "https://picsum.photos/300/200",
+      thumbnail: "https://picsum.photos/200/120?1",
       category: "Công nghệ",
-      content: "React là thư viện giúp xây dựng giao diện web nhanh chóng...",
-      createdAt: "2025-10-22",
+      content: "ReactJS là thư viện JavaScript mạnh mẽ để xây dựng giao diện người dùng.",
+      createdAt: new Date().toLocaleDateString(),
     },
     {
       id: "2",
       title: "Du lịch Đà Lạt mùa thu",
       author: "Trần Thị B",
-      thumbnail: "https://picsum.photos/300/201",
+      thumbnail: "https://picsum.photos/200/120?2",
       category: "Du lịch",
-      content: "Đà Lạt luôn là điểm đến hấp dẫn với không khí trong lành...",
-      createdAt: "2025-10-21",
+      content: "Đà Lạt luôn là điểm đến hấp dẫn với khí hậu mát mẻ và cảnh sắc tuyệt đẹp.",
+      createdAt: new Date().toLocaleDateString(),
+    },
+    {
+      id: "3",
+      title: "Cách pha cà phê ngon tại nhà",
+      author: "Lê Văn C",
+      thumbnail: "https://picsum.photos/200/120?3",
+      category: "Ẩm thực",
+      content: "Pha cà phê ngon không khó, chỉ cần biết chọn hạt và thời gian chiết xuất hợp lý.",
+      createdAt: new Date().toLocaleDateString(),
     },
   ]);
 
+  // ✅ Thêm bài viết mới
   const addPost = (data: Omit<Post, "id" | "createdAt">) => {
     const newPost: Post = {
-      ...data,
       id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toLocaleDateString(),
+      ...data,
     };
-    setPosts([...posts, newPost]);
-    alert("Đăng bài thành công!");
+    setPosts([newPost, ...posts]);
   };
 
+  // ✅ Xóa bài viết
   const deletePost = (id: string) => {
     if (window.confirm("Bạn có chắc muốn xóa bài viết này?")) {
       setPosts(posts.filter((p) => p.id !== id));
+      navigate("/");
     }
   };
 
-  const updatePost = (updated: Post) => {
-    setPosts(posts.map((p) => (p.id === updated.id ? updated : p)));
-    alert("Cập nhật thành công!");
+  // ✅ Cập nhật bài viết
+  const updatePost = (id: string, data: Omit<Post, "id" | "createdAt">) => {
+    setPosts(
+      posts.map((p) =>
+        p.id === id ? { ...p, ...data } : p
+      )
+    );
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Navbar />
+    <div style={{ fontFamily: "Arial, sans-serif" }}>
+      {/* ✅ Thanh Navbar */}
+      <nav
+        style={{
+          background: "#007bff",
+          padding: "12px 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          color: "white",
+        }}
+      >
+        <h2 style={{ margin: 0 }}>📰 Blog App</h2>
+        <div>
+          <NavLink
+            to="/"
+            style={({ isActive }) => ({
+              color: isActive ? "#ffe600" : "white",
+              marginRight: "20px",
+              textDecoration: "none",
+              fontWeight: "bold",
+            })}
+          >
+            Trang chủ
+          </NavLink>
+          <NavLink
+            to="/create"
+            style={({ isActive }) => ({
+              color: isActive ? "#ffe600" : "white",
+              textDecoration: "none",
+              fontWeight: "bold",
+            })}
+          >
+            ✍️ Viết bài
+          </NavLink>
+        </div>
+      </nav>
 
+      {/* ✅ Định tuyến các trang */}
       <Routes>
-        <Route path="/" element={<PostList posts={posts} onDelete={deletePost} />} />
-        <Route path="/create" element={<PostForm onSubmit={addPost} />} />
-        <Route path="/posts/:id" element={<PostDetail posts={posts} onDelete={deletePost} />} />
-        <Route path="/posts/edit/:id" element={<PostForm onUpdate={updatePost} />} />
+        <Route
+          path="/"
+          element={<PostList posts={posts} onDelete={deletePost} />}
+        />
+        <Route
+          path="/create"
+          element={<PostForm onSubmit={addPost} />}
+        />
+        <Route
+          path="/posts/:id"
+          element={<PostDetail posts={posts} onDelete={deletePost} />}
+        />
+        <Route
+          path="/posts/edit/:id"
+          element={<PostForm posts={posts} onUpdate={updatePost} />}
+        />
       </Routes>
     </div>
   );
